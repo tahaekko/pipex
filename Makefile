@@ -1,7 +1,7 @@
 CC = cc
 FLAGS = -Wall -Wextra -Werror
 
-SRC = pipex.c
+SRC = pipex.c	pipex_utils.c
 OBJ = $(SRC:.c=.o)
 
 LIBFT = libft.a
@@ -26,3 +26,5 @@ clean :
 fclean : clean
 	rm -rf $(NAME) $(LIBFT)
 	make fclean -C libft
+tclean :
+	rm -rf *.txt

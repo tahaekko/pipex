@@ -6,18 +6,15 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 13:40:57 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/23 10:08:19 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/23 12:23:10 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
+#include "pipex.h"
 
 char	**ft_paths(char **ev)
 {
-	int	i;
+	int		i;
 	char	*path;
 	char	*needle;
 	char	**res;
@@ -38,19 +35,20 @@ char	**ft_paths(char **ev)
 
 char	**ft_cmd_paths(char **paths, char *cmd)
 {
-	int	i;
-	char **res;
+	int		i;
+	char	**res;
 
 	i = 0;
 	while (paths[i])
 		i++;
-	res = (char**)malloc(sizeof(char *) * (i + 1));
+	res = (char **)malloc(sizeof(char *) * (i + 1));
 	res[i] = NULL;
 	i = 0;
 	while (paths[i])
 	{
-		res[i] = (char*)malloc(sizeof(char) * (ft_strlen(paths[i]) + ft_strlen(cmd) + 1));
-		ft_strlcpy(res[i], paths[i], sizeof(char)*(ft_strlen(paths[i]) + 1));
+		res[i] = (char *)malloc(sizeof(char)
+				* (ft_strlen(paths[i]) + ft_strlen(cmd) + 1));
+		ft_strlcpy(res[i], paths[i], sizeof(char) * (ft_strlen(paths[i]) + 1));
 		i++;
 	}
 	i = 0;
@@ -69,67 +67,28 @@ void	free_strings(char **s)
 
 	i = 0;
 	while (s[i])
-	{
-		free(s[i]);
-		i++;
-	}
+		free(s[i++]);
 	free(s);
 }
 
-void	ft_exec_cmd(char **cmd_path, char **cmd)
+int	main(int ac, char **av, char **env)
 {
-	int i = 0;
-	int ex = -1;
-	while (cmd_path[i] &&ex == -1)
-	{
-		execve(cmd_path[i], cmd, NULL);
-		i++;
-	}
-	if (ex == -1)
-		perror("Execve : ");
-}
+	t_pipex	*pipex;
 
-int main(int ac, char **av, char **env)
-{
-	char	**paths;
-	char	**cmd1;
-	char	**cmd2;
-	char	**cmd_path1;
-	char	**cmd_path2;
-	int	end[2];
-	int	inf;
-	int	outf;
-
-	//parse
 	if (ac != 5)
-		return 1;
-	paths = ft_paths(env);
-	cmd1 = ft_split(av[2], ' ');
-	cmd2 = ft_split(av[3], ' ');
-
-	cmd_path1 = ft_cmd_paths(paths, cmd1[0]);
-	cmd_path2 = ft_cmd_paths(paths, cmd2[0]);
-	free_strings(paths);
-	//
-	
-	//fork
-	inf = open(av[1], O_RDWR);
-	outf = open(av[4], O_WRONLY | O_CREAT, 0777);
-	pipe(end);
-	int pid = fork();
-	if (!pid)
-	{
-		dup2(inf, 0);
-		dup2(end[1], 1);
-		close(end[0]);
-		ft_exec_cmd(cmd_path1, cmd1);
-	}
+		return (1);
+	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	if (!pipex)
+		return (1);
+	ft_assign_cmd(av, env, pipex);
+	if (pipe(pipex->end) == -1)
+		exit(1);
+	pipex->pid = fork();
+	if (pipex->pid == -1)
+		exit(1);
+	if (!pipex->pid)
+		ft_child(pipex);
 	else
-	{
-		wait(0);
-		close(end[1]);
-		dup2(end[0], 0);
-		dup2(outf, 1);
-		ft_exec_cmd(cmd_path2, cmd2);
-	}
+		ft_parent(pipex);
+	free(pipex);
 }
