@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/25 17:00:56 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/27 00:10:13 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	**ft_concat_path(char **raw_path, char *cmd)
 	i = 0;
 	while (raw_path[i])
 	{
-		res[i] = malloc(sizeof(char *)
+		res[i] = malloc(sizeof(char)
 				* (ft_strlen(raw_path[i]) + ft_strlen(cmd) + 2));
 		if (!res)
 			free_it(res, i);
@@ -63,34 +63,45 @@ static char	**ft_paths(char **ev, char *cmd)
 	}
 	path = ft_substr(path, ft_strlen(ned), ft_strlen(path));
 	res = ft_split(path, ':');
+	free(path);
 	res = ft_concat_path(res, cmd);
 	return (res);
 }
 
+char	*ft_find_exec_path(char **res)
+{
+	int		i;
+	int		exec;
+	char	*path;
+
+	i = 0;
+	exec = -1;
+	while (res[i] && exec == -1)
+	{
+		exec = access(res[i], X_OK);
+		if (exec == 0)
+		{
+			path = ft_strdup(res[i]);
+			free_all(res);
+			return (path);
+		}
+		i++;
+	}
+	if (exec == -1)
+		free_all(res);
+	return (NULL);
+}
+
 char	*ft_get_path(char **cmd_raw, char **env)
 {
-	int		exec;
-	int		i;
-	char	**res;
 	char	*path;
 
 	path = NULL;
-	exec = -1;
-	i = 0;
 	if (!ft_strchr(cmd_raw[0], '/'))
-	{
-		res = ft_paths(env, cmd_raw[0]);
-		while (res[i] && exec == -1)
-		{
-			path = res[i];
-			exec = access(res[i++], X_OK);
-		}
-		if (exec == -1)
-			return (NULL);
-	}
+		path = ft_find_exec_path(ft_paths(env, cmd_raw[0]));
 	else if (ft_strchr(cmd_raw[0], '/') && access(cmd_raw[0], X_OK) == -1)
 		return (NULL);
 	else if (ft_strchr(cmd_raw[0], '/') && access(cmd_raw[0], X_OK) == 0)
-		path = cmd_raw[0];
+		path = ft_strdup(cmd_raw[0]);
 	return (path);
 }

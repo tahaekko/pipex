@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/25 16:58:27 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/27 00:11:16 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,26 @@ static void	ft_child(t_pipex *pipex)
 {
 	close(pipex->end[0]);
 	if (dup2(pipex->file[0], STDIN_FILENO) == -1
-		|| dup2(pipex->end[1], STDOUT_FILENO) == -1)
+		|| dup2(pipex->end[1], STDOUT_FILENO) == -1 || !pipex->path1)
 	{
+		ft_free_end(pipex);
 		perror("");
 		exit(1);
 	}
 	execve(pipex->path1, pipex->cmd1, NULL);
-	close(pipex->end[1]);
 }
 
-static void	ft_parent(t_pipex *pipex, int *status)
+static void	ft_sec_child(t_pipex *pipex)
 {
-	wait(status);
 	close(pipex->end[1]);
 	if (dup2(pipex->end[0], STDIN_FILENO) == -1
-		|| dup2(pipex->file[1], STDOUT_FILENO) == -1)
+		|| dup2(pipex->file[1], STDOUT_FILENO) == -1 || !pipex->path2)
 	{
-		perror("Dup");
+		ft_free_end(pipex);
+		perror("");
 		exit(1);
 	}
 	execve(pipex->path2, pipex->cmd2, NULL);
-	close(pipex->end[0]);
 }
 
 static void	ft_init(t_pipex *pipex, char **av, char **env)
@@ -59,9 +58,16 @@ static void	ft_init(t_pipex *pipex, char **av, char **env)
 	}
 }
 
+void	ft_parent(t_pipex *pipex)
+{
+	ft_close(pipex);
+	waitpid(pipex->pid, NULL, 0);
+	waitpid(pipex->pid2, NULL, 0);
+	ft_free_end(pipex);
+}
+
 int	main(int ac, char **av, char **env)
 {
-	int		status;
 	t_pipex	*pipex;
 
 	if (ac != 5)
@@ -69,14 +75,20 @@ int	main(int ac, char **av, char **env)
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
 	ft_init(pipex, av, env);
 	if (pipe(pipex->end) == -1)
+	{
+		ft_free_end(pipex);
 		return (perror("Pipe"), 1);
+	}
 	pipex->pid = fork();
 	if (pipex->pid == -1)
-		return (perror("Fork"), 1);
+		ft_error(pipex);
 	if (!pipex->pid)
-	{
 		ft_child(pipex);
-	}
-	else
-		ft_parent(pipex, &status);
+	pipex->pid2 = fork();
+	if (pipex->pid2 == -1)
+		ft_error(pipex);
+	if (!pipex->pid2)
+		ft_sec_child(pipex);
+	ft_parent(pipex);
+	return (0);
 }
