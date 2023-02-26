@@ -5,90 +5,78 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/22 13:40:57 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/23 12:23:10 by msamhaou         ###   ########.fr       */
+/*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
+/*   Updated: 2023/02/25 16:58:27 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**ft_paths(char **ev)
+static void	ft_child(t_pipex *pipex)
 {
-	int		i;
-	char	*path;
-	char	*needle;
-	char	**res;
-
-	path = NULL;
-	needle = "PATH=";
-	i = 0;
-	while (ev[i] && path == NULL)
+	close(pipex->end[0]);
+	if (dup2(pipex->file[0], STDIN_FILENO) == -1
+		|| dup2(pipex->end[1], STDOUT_FILENO) == -1)
 	{
-		path = ft_strnstr(ev[i], needle, ft_strlen(ev[i]));
-		i++;
+		perror("");
+		exit(1);
 	}
-	path = ft_substr(path, (unsigned int)ft_strlen(needle), ft_strlen(path));
-	res = ft_split(path, ':');
-	free(path);
-	return (res);
+	execve(pipex->path1, pipex->cmd1, NULL);
+	close(pipex->end[1]);
 }
 
-char	**ft_cmd_paths(char **paths, char *cmd)
+static void	ft_parent(t_pipex *pipex, int *status)
 {
-	int		i;
-	char	**res;
-
-	i = 0;
-	while (paths[i])
-		i++;
-	res = (char **)malloc(sizeof(char *) * (i + 1));
-	res[i] = NULL;
-	i = 0;
-	while (paths[i])
+	wait(status);
+	close(pipex->end[1]);
+	if (dup2(pipex->end[0], STDIN_FILENO) == -1
+		|| dup2(pipex->file[1], STDOUT_FILENO) == -1)
 	{
-		res[i] = (char *)malloc(sizeof(char)
-				* (ft_strlen(paths[i]) + ft_strlen(cmd) + 1));
-		ft_strlcpy(res[i], paths[i], sizeof(char) * (ft_strlen(paths[i]) + 1));
-		i++;
+		perror("Dup");
+		exit(1);
 	}
-	i = 0;
-	while (res[i])
-	{
-		ft_strlcat(res[i], "/", ft_strlen(res[i]) + 2);
-		ft_strlcat(res[i], cmd, ft_strlen(res[i]) + ft_strlen(cmd) + 1);
-		i++;
-	}
-	return (res);
+	execve(pipex->path2, pipex->cmd2, NULL);
+	close(pipex->end[0]);
 }
 
-void	free_strings(char **s)
+static void	ft_init(t_pipex *pipex, char **av, char **env)
 {
-	int	i;
-
-	i = 0;
-	while (s[i])
-		free(s[i++]);
-	free(s);
+	pipex->file[0] = open(av[1], O_RDONLY);
+	pipex->file[1] = open(av[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (pipex->file[0] == -1 || pipex->file[1] == -1)
+	{
+		perror("Open File");
+		exit(1);
+	}
+	pipex->cmd1 = ft_split(av[2], ' ');
+	pipex->path1 = ft_get_path(pipex->cmd1, env);
+	pipex->cmd2 = ft_split(av[3], ' ');
+	pipex->path2 = ft_get_path(pipex->cmd2, env);
+	if (!pipex->path1 && !pipex->path2)
+	{
+		perror("Open File");
+		exit(1);
+	}
 }
 
 int	main(int ac, char **av, char **env)
 {
+	int		status;
 	t_pipex	*pipex;
 
 	if (ac != 5)
 		return (1);
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
-	if (!pipex)
-		return (1);
-	ft_assign_cmd(av, env, pipex);
+	ft_init(pipex, av, env);
 	if (pipe(pipex->end) == -1)
-		exit(1);
+		return (perror("Pipe"), 1);
 	pipex->pid = fork();
 	if (pipex->pid == -1)
-		exit(1);
+		return (perror("Fork"), 1);
 	if (!pipex->pid)
+	{
 		ft_child(pipex);
+	}
 	else
-		ft_parent(pipex);
-	free(pipex);
+		ft_parent(pipex, &status);
 }
