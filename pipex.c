@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/27 23:27:07 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 00:04:46 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ int	main(int ac, char **av, char **env)
 	if (ac != 5)
 		return (1);
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	if (!pipex)
+		return (1);
 	ft_init(pipex, av, env);
 	if (pipe(pipex->end) == -1)
 	{
