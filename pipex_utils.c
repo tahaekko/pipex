@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/27 00:10:13 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 00:14:31 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,16 @@ static char	**ft_concat_path(char **raw_path, char *cmd)
 	while (raw_path[i])
 		i++;
 	res = (char **)malloc(sizeof(char *) * (i + 1));
+	if (!res)
+		exit(1);
 	res[i] = NULL;
 	i = 0;
 	while (raw_path[i])
 	{
 		res[i] = malloc(sizeof(char)
 				* (ft_strlen(raw_path[i]) + ft_strlen(cmd) + 2));
-		if (!res)
-			free_it(res, i);
+		if (!res[i])
+			return (free_it(res, i), NULL);
 		ft_strlcpy(res[i], raw_path[i], ft_strlen(raw_path[i]) + 1);
 		free(raw_path[i]);
 		ft_strlcat(res[i], "/", ft_strlen(res[i]) + 2);
@@ -65,6 +67,8 @@ static char	**ft_paths(char **ev, char *cmd)
 	res = ft_split(path, ':');
 	free(path);
 	res = ft_concat_path(res, cmd);
+	if (!res)
+		exit(1);
 	return (res);
 }
 
