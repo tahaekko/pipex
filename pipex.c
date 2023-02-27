@@ -6,13 +6,13 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 00:04:46 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 00:28:54 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	ft_child(t_pipex *pipex)
+static void	ft_child(t_pipex *pipex, char **env)
 {
 	close(pipex->end[0]);
 	if (dup2(pipex->file[0], STDIN_FILENO) == -1
@@ -24,10 +24,10 @@ static void	ft_child(t_pipex *pipex)
 	}
 	free(pipex->path2);
 	free_all(pipex->cmd2);
-	execve(pipex->path1, pipex->cmd1, NULL);
+	execve(pipex->path1, pipex->cmd1, env);
 }
 
-static void	ft_sec_child(t_pipex *pipex)
+static void	ft_sec_child(t_pipex *pipex, char **env)
 {
 	close(pipex->end[1]);
 	if (dup2(pipex->end[0], STDIN_FILENO) == -1
@@ -39,7 +39,7 @@ static void	ft_sec_child(t_pipex *pipex)
 	}
 	free(pipex->path1);
 	free_all(pipex->cmd1);
-	execve(pipex->path2, pipex->cmd2, NULL);
+	execve(pipex->path2, pipex->cmd2, env);
 }
 
 static void	ft_init(t_pipex *pipex, char **av, char **env)
@@ -89,12 +89,12 @@ int	main(int ac, char **av, char **env)
 	if (pipex->pid == -1)
 		ft_error(pipex);
 	if (!pipex->pid)
-		ft_child(pipex);
+		ft_child(pipex, env);
 	pipex->pid2 = fork();
 	if (pipex->pid2 == -1)
 		ft_error(pipex);
 	if (!pipex->pid2)
-		ft_sec_child(pipex);
+		ft_sec_child(pipex, env);
 	ft_main_proc(pipex);
 	return (0);
 }
