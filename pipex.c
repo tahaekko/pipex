@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/27 23:24:20 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/27 23:27:07 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	ft_init(t_pipex *pipex, char **av, char **env)
 	}
 }
 
-void	ft_parent(t_pipex *pipex)
+void	ft_main_proc(t_pipex *pipex)
 {
 	ft_close(pipex);
 	waitpid(pipex->pid, NULL, 0);
@@ -93,6 +93,6 @@ int	main(int ac, char **av, char **env)
 		ft_error(pipex);
 	if (!pipex->pid2)
 		ft_sec_child(pipex);
-	ft_parent(pipex);
+	ft_main_proc(pipex);
 	return (0);
 }
