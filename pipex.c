@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 15:21:08 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:16:19 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,6 @@ static void	ft_init(t_pipex *pipex, char **av, char **env)
 	pipex->path1 = ft_get_path(pipex->cmd1, env);
 	pipex->cmd2 = ft_split(av[3], ' ');
 	pipex->path2 = ft_get_path(pipex->cmd2, env);
-	if (!pipex->path1 && !pipex->path2)
-	{
-		perror("Open File");
-		exit(1);
-	}
 }
 
 void	ft_main_proc(t_pipex *pipex)

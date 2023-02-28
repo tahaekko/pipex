@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 09:58:56 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 15:22:08 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:05:39 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	**ft_split(char const *s, char c)
 	size_t	end;
 	size_t	i;
 
-	if (!s || !(s[0]) || !ft_other_char(s, c))
+	if (!s || !(s[0]) || !ft_other_char(s, c) || s[0] == c)
 		return (0);
 	split = (char **)malloc((word_count(s, c) + 1) * sizeof (char *));
 	if (!split)

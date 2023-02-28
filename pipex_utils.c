@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 15:21:36 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:04:23 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	*ft_get_path(char **cmd_raw, char **env)
 	path = NULL;
 	if (!ft_strchr(cmd_raw[0], '/'))
 		path = ft_find_exec_path(ft_paths(env, cmd_raw[0]));
-	else if (ft_strchr(cmd_raw[0], '/') && access(cmd_raw[0], X_OK) == -1)
+	else if ((ft_strchr(cmd_raw[0], '/') && access(cmd_raw[0], X_OK) == -1))
 		return (NULL);
 	else if (ft_strchr(cmd_raw[0], '/') && access(cmd_raw[0], X_OK) == 0)
 		path = ft_strdup(cmd_raw[0]);
