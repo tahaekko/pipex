@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 00:28:54 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 01:51:23 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ static void	ft_child(t_pipex *pipex, char **env)
 		perror("");
 		exit(1);
 	}
-	free(pipex->path2);
-	free_all(pipex->cmd2);
+	if (pipex->path2)
+		free(pipex->path2);
+	if (pipex->cmd2)
+		free_all(pipex->cmd2);
 	execve(pipex->path1, pipex->cmd1, env);
 }
 
@@ -37,7 +39,9 @@ static void	ft_sec_child(t_pipex *pipex, char **env)
 		perror("");
 		exit(1);
 	}
-	free(pipex->path1);
+	if (pipex->path1)
+		free(pipex->path1);
+	if (pipex->cmd1)
 	free_all(pipex->cmd1);
 	execve(pipex->path2, pipex->cmd2, env);
 }

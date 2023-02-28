@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 22:14:25 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/27 00:10:47 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 01:46:18 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 
 void	ft_free_end(t_pipex *pipex)
 {
-	free(pipex->path1);
-	free(pipex->path2);
-	free_all(pipex->cmd1);
-	free_all(pipex->cmd2);
+	if (pipex->path1)
+		free(pipex->path1);
+	if (pipex->path2)
+		free(pipex->path2);
+	if (pipex->cmd1)
+		free_all(pipex->cmd1);
+	if (pipex->cmd2)
+		free_all(pipex->cmd2);
 	free(pipex);
 }
 

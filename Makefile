@@ -6,7 +6,7 @@
 #    By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/25 11:46:42 by msamhaou          #+#    #+#              #
-#    Updated: 2023/02/26 22:16:20 by msamhaou         ###   ########.fr        #
+#    Updated: 2023/02/28 01:49:11 by msamhaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,3 +32,4 @@ clean :
 fclean : clean
 	rm -rf $(NAME) $(LIBFT)
 	make fclean -C libft
+re : fclean all
