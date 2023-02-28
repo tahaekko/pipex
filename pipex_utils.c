@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 01:47:34 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 15:21:36 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ char	*ft_get_path(char **cmd_raw, char **env)
 {
 	char	*path;
 
-	if(!cmd_raw)
+	if (!cmd_raw)
 		return (NULL);
 	path = NULL;
 	if (!ft_strchr(cmd_raw[0], '/'))

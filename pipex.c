@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:02:19 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 01:51:23 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 15:21:08 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static void	ft_sec_child(t_pipex *pipex, char **env)
 	if (pipex->path1)
 		free(pipex->path1);
 	if (pipex->cmd1)
-	free_all(pipex->cmd1);
+		free_all(pipex->cmd1);
 	execve(pipex->path2, pipex->cmd2, env);
 }
 

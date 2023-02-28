@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 09:58:56 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 01:48:57 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/02/28 15:22:08 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,20 @@ static void	ft_sne(const char *s, size_t *start, size_t *end, char c)
 		*end += 1;
 }
 
+static int	ft_other_char(const char *s, char c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] != c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 char	**ft_split(char const *s, char c)
 {
 	char	**split;
@@ -55,7 +69,7 @@ char	**ft_split(char const *s, char c)
 	size_t	end;
 	size_t	i;
 
-	if (!s || !(s[0]))
+	if (!s || !(s[0]) || !ft_other_char(s, c))
 		return (0);
 	split = (char **)malloc((word_count(s, c) + 1) * sizeof (char *));
 	if (!split)
