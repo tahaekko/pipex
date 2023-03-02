@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/03/02 19:58:53 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/03/02 20:07:08 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,12 @@ static char	**ft_concat_path(char **raw_path, char *cmd)
 		if (!res[i])
 			return (free_it(res, i), NULL);
 		ft_strlcpy(res[i], raw_path[i], ft_strlen(raw_path[i]) + 1);
-		free(raw_path[i]);
 		ft_strlcat(res[i], "/", ft_strlen(res[i]) + 2);
 		ft_strlcat(res[i], cmd, ft_strlen(res[i]) + ft_strlen(cmd) + 1);
 		i++;
 	}
 	res[i] = NULL;
-	free(raw_path);
+	free_all(raw_path);
 	return (res);
 }
 
@@ -52,23 +51,27 @@ static char	**ft_paths(char **ev, char *cmd)
 {
 	char	*path;
 	char	**res;
-	char	*ned;
+	char	**raw_path;
 	int		i;
 
-	ned = "PATH=";
 	path = NULL;
 	i = 0;
 	while (ev[i] && path == NULL)
 	{
-		path = ft_strnstr(ev[i], ned, ft_strlen(ev[i]));
+		path = ft_strnstr(ev[i], "PATH=", ft_strlen(ev[i]));
 		i++;
 	}
-	path = ft_substr(path, ft_strlen(ned), ft_strlen(path));
-	res = ft_split(path, ':');
+	path = ft_substr(path, ft_strlen("PATH="), ft_strlen(path));
+	raw_path = ft_split(path, ':');
 	free(path);
-	res = ft_concat_path(res, cmd);
-	if (!res)
+	if (!raw_path)
 		exit(1);
+	res = ft_concat_path(raw_path, cmd);
+	if (!res)
+	{
+		free_all(raw_path);
+		exit(1);
+	}
 	return (res);
 }
 
