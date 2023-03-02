@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 17:04:23 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/03/02 19:58:53 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ static char	**ft_concat_path(char **raw_path, char *cmd)
 	res = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!res)
 		exit(1);
-	res[i] = NULL;
 	i = 0;
 	while (raw_path[i])
 	{
@@ -44,6 +43,7 @@ static char	**ft_concat_path(char **raw_path, char *cmd)
 		ft_strlcat(res[i], cmd, ft_strlen(res[i]) + ft_strlen(cmd) + 1);
 		i++;
 	}
+	res[i] = NULL;
 	free(raw_path);
 	return (res);
 }
