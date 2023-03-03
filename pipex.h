@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:56:02 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/26 22:21:57 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/03/03 01:16:44 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,5 @@ void	free_all(char **s);
 void	ft_free_end(t_pipex *pipex);
 void	ft_close(t_pipex *pipex);
 void	ft_error(t_pipex *pipex);
+char	*ft_path_find(char **ev);
 #endif

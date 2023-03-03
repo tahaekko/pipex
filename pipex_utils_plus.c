@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 22:14:25 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/02/28 01:46:18 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/03/03 01:17:05 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,22 @@ void	free_all(char **s)
 	while (s[i])
 		free(s[i++]);
 	free(s);
+}
+
+char	*ft_path_find(char **ev)
+{
+	int		i;
+	char	*path;
+
+	path = NULL;
+	i = 0;
+	while (ev[i] && path == NULL)
+	{
+		path = ft_strnstr(ev[i], "PATH=", ft_strlen(ev[i]));
+		i++;
+	}
+	path = ft_substr(path, ft_strlen("PATH="), ft_strlen(path));
+	if (!path)
+		exit(1);
+	return (path);
 }

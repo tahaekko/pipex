@@ -6,7 +6,7 @@
 /*   By: msamhaou <msamhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 23:58:10 by msamhaou          #+#    #+#             */
-/*   Updated: 2023/03/02 20:07:08 by msamhaou         ###   ########.fr       */
+/*   Updated: 2023/03/03 01:16:23 by msamhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,8 @@ static char	**ft_paths(char **ev, char *cmd)
 	char	*path;
 	char	**res;
 	char	**raw_path;
-	int		i;
 
-	path = NULL;
-	i = 0;
-	while (ev[i] && path == NULL)
-	{
-		path = ft_strnstr(ev[i], "PATH=", ft_strlen(ev[i]));
-		i++;
-	}
-	path = ft_substr(path, ft_strlen("PATH="), ft_strlen(path));
+	path = ft_path_find(ev);
 	raw_path = ft_split(path, ':');
 	free(path);
 	if (!raw_path)
